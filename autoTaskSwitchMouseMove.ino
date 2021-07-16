@@ -45,7 +45,7 @@ void loop() {
       if (alt_press_counter > ALT_PRESS_DELAY) {
         if (!esc_on) {
           esc_on = true;
-          TrinketHidCombo.pressKey(KEYCODE_MOD_LEFT_ALT, KEYCODE_ESC, 0, 0);
+          TrinketHidCombo.pressKey(KEYCODE_MOD_LEFT_ALT, KEYCODE_ESC);
           esc_press_counter = 0;
         } else { // esc is on
           esc_press_counter++;
@@ -53,7 +53,7 @@ void loop() {
             esc_on = false;
             alt_on = false;
             digitalWrite(LED_PIN, LOW);
-            TrinketHidCombo.pressKey(0, 0, 0, 0);  // both alt and esc are released
+            TrinketHidCombo.pressKey(0, 0);  // both alt and esc are released
             keyboard_counter = 0;
           }
         }
