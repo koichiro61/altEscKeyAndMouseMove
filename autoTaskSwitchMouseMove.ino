@@ -38,29 +38,27 @@ void loop() {
       alt_on = true;
       digitalWrite(LED_PIN, HIGH);
       TrinketHidCombo.pressKey(KEYCODE_MOD_LEFT_ALT, 0);
-      alt_press_counter=0;
-      
+      alt_press_counter = 0;
+
     } else { // alt is on
+      alt_press_counter++;
       if (alt_press_counter > ALT_PRESS_DELAY) {
         if (!esc_on) {
           esc_on = true;
-          TrinketHidCombo.pressKey(KEYCODE_MOD_LEFT_ALT, KEYCODE_ESC, 0,0);
-          esc_press_counter = 0;          
+          TrinketHidCombo.pressKey(KEYCODE_MOD_LEFT_ALT, KEYCODE_ESC, 0, 0);
+          esc_press_counter = 0;
         } else { // esc is on
+          esc_press_counter++;
           if (esc_press_counter > ESC_PRESS_DURATION) {
             esc_on = false;
             alt_on = false;
             digitalWrite(LED_PIN, LOW);
             TrinketHidCombo.pressKey(0, 0, 0, 0);  // both alt and esc are released
             keyboard_counter = 0;
-          } else {
-            esc_press_counter++;
           }
         }
-      } else {
-        alt_press_counter++;
       }
-    }
     delay(1);
+    }
   }
 }
