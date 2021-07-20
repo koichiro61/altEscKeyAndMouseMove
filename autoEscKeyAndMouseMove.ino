@@ -1,12 +1,13 @@
+#define DEBUG 0
 #include <TrinketHidCombo.h>
 
 #define LED_PIN 1
 
-#define MOUSE_INTERVAL      100 // ms (approx.)
-#define KEYBOARD_INTERVAL   1000
-#define ALT_PRESS_DELAY     200
-#define ESC_PRESS_DURATION  100
-#define MOUSE_MOVE_MAX      100
+#define MOUSE_INTERVAL      20 // ms (approx.)
+#define KEYBOARD_INTERVAL   500
+#define ALT_PRESS_DELAY     50
+#define ESC_PRESS_DURATION  5
+#define MOUSE_MOVE_MAX      50
 
 int mouse_counter = 0, keyboard_counter = 0;
 int alt_press_counter = 0, esc_press_counter = 0;
@@ -27,7 +28,7 @@ void loop() {
 
   mouse_counter++;
   if (mouse_counter > MOUSE_INTERVAL) {
- //   TrinketHidCombo.mouseMove(random(MOUSE_MOVE_MAX) * 2 - MOUSE_MOVE_MAX, random(MOUSE_MOVE_MAX) * 2 - MOUSE_MOVE_MAX, 0);
+    TrinketHidCombo.mouseMove(random(MOUSE_MOVE_MAX) * 2 - MOUSE_MOVE_MAX, random(MOUSE_MOVE_MAX) * 2 - MOUSE_MOVE_MAX, 0);
     mouse_counter = 0;
   }
 
@@ -37,22 +38,38 @@ void loop() {
     if (!alt_on) {
       alt_on = true;
       digitalWrite(LED_PIN, HIGH);
-      //TrinketHidCombo.pressKey(KEYCODE_MOD_LEFT_ALT, 0);
-      TrinketHidCombo.pressKey(KEYCODE_MOD_LEFT_SHIFT, 0);
 
+      #if DEBUG
+      TrinketHidCombo.pressKey(KEYCODE_MOD_LEFT_SHIFT, 0);
+      #else
+      TrinketHidCombo.pressKey(KEYCODE_MOD_LEFT_ALT, 0);
+      #endif
+            
     } else { // alt is on
       alt_press_counter++;
       if (alt_press_counter > ALT_PRESS_DELAY) {
         if (!esc_on) {
           esc_on = true;
-          //TrinketHidCombo.pressKey(KEYCODE_MOD_LEFT_ALT, KEYCODE_ESC);
+
+          #if DEBUG
           TrinketHidCombo.pressKey(KEYCODE_MOD_LEFT_SHIFT, KEYCODE_A);
+          #else
+          TrinketHidCombo.pressKey(KEYCODE_MOD_LEFT_ALT, KEYCODE_ESC);
+          #endif
+
         } else { // esc is on
           esc_press_counter++;
           if (esc_press_counter > ESC_PRESS_DURATION) {
             esc_on = false;
             alt_on = false;
             digitalWrite(LED_PIN, LOW);
+
+            #if DEBUG
+            TrinketHidCombo.pressKey(KEYCODE_MOD_LEFT_SHIFT, 0);  // both alt and esc are released
+            #else
+            TrinketHidCombo.pressKey(KEYCODE_MOD_LEFT_ALT, 0);  // both alt and esc are released
+            #endif
+
             TrinketHidCombo.pressKey(0, 0);  // both alt and esc are released
             alt_press_counter = 0;
             esc_press_counter = 0;
@@ -62,5 +79,5 @@ void loop() {
       }
     }
   }
-  delay(5);
+  delay(1);
 }
